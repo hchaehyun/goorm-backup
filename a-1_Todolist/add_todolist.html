@@ -1,0 +1,90 @@
+<!-- add_todolist.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Todo</title>
+    <style>
+        * {
+            font-family: 'Nanum Gothic', sans-serif;
+        }
+        body {
+            background-color: #d0cece;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            width: 80%;
+            margin: 20px;
+            padding: 20px;
+            box-sizing: border-box;
+            color: black;
+            text-align: center;
+        }
+
+        #title, #description {
+            margin-bottom: 10px;
+        }
+
+        #description {
+            width: 400px;
+            height: 200px;
+        }
+
+        button {
+            background-color: #7f7f7f;
+            color: #ffffff;
+            margin: 0 10px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="btn-group">
+        <button onclick="location.href='main_todolist.html'">홈으로</button>
+        <button type="submit" form="add-todo-form">완료</button>
+    </div>
+
+    <div class="container">
+        <h2>Todo 제목</h2>
+        <form id="add-todo-form">
+            <input type="text" id="title" name="title" required>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Todo 세부내용</h2>
+        <form id="add-todo-form">
+            <textarea id="description" name="description" required></textarea>
+        </form>
+    </div>
+
+    <script>
+    document.getElementById('add-todo-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+        let id = todos.length > 0 ? todos[todos.length - 1].id + 1 : 1;
+
+        todos.push({ id, title, description });
+
+        localStorage.setItem('todos', JSON.stringify(todos));
+
+        window.location.href = 'main_todolist.html';
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!-- indiv_todolist.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo Detail</title>
+    <style>
+        * {
+            font-family: 'Nanum Gothic', sans-serif;
+        }
+
+        body {
+            background-color: #d0cece;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            width: 80%;
+            margin: 20px;
+            padding: 20px;
+            box-sizing: border-box;
+            color: black;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #7f7f7f;
+            color: #ffffff;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="btn-group">
+        <button onclick="location.href='main_todolist.html'">이전으로</button>
+        <button id="edit-button">수정</button>
+        <button onclick="handleDelete()">삭제</button>
+    </div>
+
+    <div id="todo-title" class="container"></div>
+    <div id="todo-description" class="container"></div>
+
+    <script>
+    let id;
+
+    window.onload = function() {
+        id = new URLSearchParams(window.location.search).get('id');
+
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+        let todo = todos.find(todo => todo.id == id);
+
+        if (todo) {
+            document.getElementById('todo-title').innerText = todo.title;
+            document.getElementById('todo-description').innerText = todo.description;
+            document.getElementById('edit-button').onclick = function() {location.href = 'indiv_edit_todolist.html?id=' + id};
+        } else {
+            alert('해당 투두 항목이 없습니다.');
+            window.location.href = 'main_todolist.html';
+        }
+    };
+
+    function handleDelete() {
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+        let todoIndex = todos.findIndex(todo => todo.id == id);
+
+        if (todoIndex > -1) {
+            todos.splice(todoIndex, 1);
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        window.location.href = 'main_todolist.html';
+    }
+    </script>
+</body>
+</html>

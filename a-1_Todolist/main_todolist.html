@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <style>
+        * {
+            font-family: 'Nanum Gothic', sans-serif;
+        }
+
+        body {
+            background-color: #d0cece;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            width: 80%;
+            margin: 20px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #date-progress {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .add-btn {
+            background-color: #ffffff;
+            color: #7f7f7f;
+            border: none;
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            line-height: 50px;
+            font-size: 25px;
+            margin: auto;
+            display: flex;
+        }
+
+        .todo-item {
+            background-color: #e7e6e6;
+            margin: 10px 0;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .view-btn {
+            background-color: #e7e6e6;
+            color: #7f7f7f;
+            border: none;
+            text-align: center;
+            font-size: 25px;
+        }
+
+        .checked {
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <div id="date-progress" class="container">
+        <div id="date"></div>
+        <div id="progress"></div>
+    </div>
+
+    <div id="todo-list" class="container"></div>
+
+    <div class="container">
+        <button class="add-btn" onclick="location.href='add_todolist.html'">+</button>
+    </div>
+
+    <script>
+        window.onload = function() {
+            let today = new Date();
+            let dateString = today.getFullYear() + '.' + (today.getMonth() + 1) + '.' + today.getDate();
+            document.getElementById('date').innerHTML = 'Today: ' + dateString;
+    
+            let todos = JSON.parse(localStorage.getItem('todos')) || [];
+            let todoList = document.getElementById('todo-list');
+    
+            let doneCount = todos.filter(todo => todo.done).length;
+            let progressString = '진도율: ' + doneCount + '/' + todos.length;
+            document.getElementById('progress').innerHTML = progressString;
+    
+            todos.reverse().forEach((todo, index) => {
+                let todoItem = document.createElement('div');
+                todoItem.classList.add('todo-item');
+                todoItem.innerHTML = `
+                    <input type="checkbox" id="todo-${todo.id}" ${todo.done ? 'checked' : ''} onchange="handleCheck(this, ${todo.id})">
+                    <label id="todo-label-${todo.id}" for="todo-${todo.id}" class="${todo.done ? 'checked' : ''}" onclick="window.location.href='indiv_todolist.html?id=${todo.id}'">${todo.title}</label>
+                    <button class="view-btn" onclick="window.location.href='indiv_todolist.html?id=${todo.id}'">></button>
+                `;
+    
+                todoList.appendChild(todoItem);
+            });
+        };
+    
+        function handleCheck(checkbox, id) {
+            let label = document.getElementById('todo-label-' + id);
+    
+            if (checkbox.checked) {
+                label.classList.add('checked');
+            } else {
+                label.classList.remove('checked');
+            }
+    
+            let todos = JSON.parse(localStorage.getItem('todos')) || [];
+            let todoIndex = todos.findIndex(todo => todo.id == id);
+    
+            if (todoIndex > -1) {
+                todos[todoIndex].done = checkbox.checked;
+    
+                // 진도율 업데이트
+                let doneCount = todos.filter(todo => todo.done).length;
+                let progressString = '진도율: ' + doneCount + '/' + todos.length;
+                document.getElementById('progress').innerHTML = progressString;
+    
+                // 변경된 투두 상태를 로컬 스토리지에 저장
+                localStorage.setItem('todos', JSON.stringify(todos));
+    
+                // 변경사항 반영을 위해 페이지 새로고침
+                location.reload();
+            }
+        }
+    </script>
+    
+</body>
+</html>
